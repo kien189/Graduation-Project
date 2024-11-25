@@ -11,7 +11,7 @@ import { notification } from 'antd'; // Import Ant Design's notification compone
 // Định nghĩa schema cho việc xác thực form sử dụng Zod
 const comboSchema = z.object({
   combo_name: z.string().min(1, "Tên combo là bắt buộc."),
-  descripton: z.string().min(1, "Mô tả là bắt buộc."),
+  descripton: z.string().min(1, "Mô tả là bắt buộc.").max(500,'Mô tả tối đa 500 ký tự'),
   price: z
     .number()
     .min(0, "Giá phải lớn hơn hoặc bằng 0.")

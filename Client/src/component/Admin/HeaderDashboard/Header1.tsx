@@ -64,6 +64,8 @@ const Header = () => {
                 return 'Doanh Thu Theo Phim';
             case 'actor':
                 return 'Quản Lí Diễn Viên'
+            case 'director':
+                return 'Quản Lí Đạo Diễn'
             default:
                 return 'Welcome';
         }

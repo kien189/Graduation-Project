@@ -84,6 +84,7 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       } else {
         dispatch({ type: 'ADD_POST', payload: response.data.data });
       }
+      await fetchPosts();
     } catch (error) {
       console.error('Error submitting post:', error);
       // Xử lý lỗi nếu cần
@@ -103,7 +104,7 @@ const fetchPosts = async () => {
 // Call fetchPosts when the provider mounts
 React.useEffect(() => {
   fetchPosts();
-}, [state.posts]);
+}, []);
 
   const deletePost = async (id: number) => {
     try {

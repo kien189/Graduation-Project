@@ -3,14 +3,14 @@ import './RevenueByCinema.css';
 import { Line, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend, ArcElement } from 'chart.js';
 
-// Registering necessary components for ChartJS
+// Đăng ký các thành phần cần thiết cho ChartJS
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend, ArcElement);
 
 const RevenueByCinema = () => {
     const revenueData = [
-        { cinema: 'Cinema 1', revenue: 10000 },
-        { cinema: 'Cinema 2', revenue: 15000 },
-        { cinema: 'Cinema 3', revenue: 8000 },
+        { cinema: 'Rạp 1', revenue: 10000 },
+        { cinema: 'Rạp 2', revenue: 15000 },
+        { cinema: 'Rạp 3', revenue: 8000 },
     ];
 
     const totalRevenue = revenueData.reduce((acc, item) => acc + item.revenue, 0);
@@ -18,19 +18,19 @@ const RevenueByCinema = () => {
     const areaData = {
         labels: revenueData.map(item => item.cinema),
         datasets: [{
-            label: 'Revenue',
+            label: 'Doanh thu',
             data: revenueData.map(item => item.revenue),
-            backgroundColor: 'rgba(39, 174, 96, 0.4)', // Light green with opacity
-            borderColor: '#27ae60', // Dark green
+            backgroundColor: 'rgba(39, 174, 96, 0.4)', // Xanh lá nhạt với độ trong suốt
+            borderColor: '#27ae60', // Xanh lá đậm
             borderWidth: 2,
-            fill: true, // This makes it an area chart
+            fill: true, // Hiển thị dạng biểu đồ vùng
         }],
     };
 
     const pieData = {
         labels: revenueData.map(item => item.cinema),
         datasets: [{
-            label: 'Revenue Distribution',
+            label: 'Phân phối doanh thu',
             data: revenueData.map(item => item.revenue),
             backgroundColor: ['#27ae60', '#3498db', '#e74c3c'],
             borderColor: '#ffffff',
@@ -40,14 +40,22 @@ const RevenueByCinema = () => {
 
     return (
         <div className="revenue-display">
-            <h2>Revenue Overview</h2>
+            <h2>Tổng quan doanh thu</h2>
             <div className="summary-card">
-                <h3>Total Revenue</h3>
+                <h3>Đã thanh toán</h3>
+                <p className="total-revenue">${totalRevenue.toLocaleString()}</p>
+            </div>
+            <div className="summary-card">
+                <h3>Chờ thanh toán</h3>
+                <p className="total-revenue">${totalRevenue.toLocaleString()}</p>
+            </div>
+            <div className="summary-card">
+                <h3>Chưa thanh toán</h3>
                 <p className="total-revenue">${totalRevenue.toLocaleString()}</p>
             </div>
             <div className="chart-container">
                 <div className="chart-section1">
-                    <h3>Revenue by Cinema (Area Chart)</h3>
+                    <h3>Doanh thu theo rạp (Biểu đồ vùng)</h3>
                     <Line data={areaData} options={{
                         responsive: true,
                         plugins: {
@@ -64,13 +72,13 @@ const RevenueByCinema = () => {
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Cinemas',
+                                    text: 'Các rạp',
                                 },
                             },
                             y: {
                                 title: {
                                     display: true,
-                                    text: 'Revenue',
+                                    text: 'Doanh thu',
                                 },
                                 ticks: {
                                     callback: (value) => `$${value}`,
@@ -80,7 +88,7 @@ const RevenueByCinema = () => {
                     }} />
                 </div>
                 <div className="chart-section2">
-                    <h3>Revenue Distribution (Pie Chart)</h3>
+                    <h3>Phân phối doanh thu (Biểu đồ tròn)</h3>
                     <Pie data={pieData} options={{
                         responsive: true,
                         plugins: {
@@ -96,7 +104,7 @@ const RevenueByCinema = () => {
                     }} />
                 </div>
             </div>
-            <button className="export-btn">Export Report</button>
+            <button className="export-btn">Xuất báo cáo</button>
         </div>
     );
 };

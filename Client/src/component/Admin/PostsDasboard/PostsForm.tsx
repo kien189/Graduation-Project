@@ -12,7 +12,7 @@ import { notification } from 'antd'; // Import Ant Design notification
 const postSchema = z.object({
   title: z.string().min(1, 'Tiêu đề là bắt buộc').max(100,'Tiêu đề tối đa 100 ký tự'), // Title is required
   news_category_id: z.string().min(1, 'Chọn một danh mục'), // Category is required
-  content: z.string().min(1, 'Nội dung là bắt buộc'), // Content is required
+  content: z.string().min(1, 'Nội dung là bắt buộc').max(1000,'Nội dung tối đa 1000 ký tự'), // Content is required
 });
 
 type FormData = z.infer<typeof postSchema>;
@@ -25,6 +25,8 @@ const PostsForm: React.FC = () => {
   const [categories, setCategories] = useState<NewsCategory[]>([]);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [oldThumbnail, setOldThumbnail] = useState<string | null>(null); // Store old thumbnail URL
+  const [oldBanner, setOldBanner] = useState<string | null>(null); // Store old banner URL
   const { addOrUpdatePost } = usePostsContext();
   const nav = useNavigate();
 
@@ -38,6 +40,10 @@ const PostsForm: React.FC = () => {
           const postResponse = await instance.get(`/news/${id}`);
           const postData = postResponse.data.data;
           console.log(postData);
+
+          // Set old images if available
+          setOldThumbnail(postData.thumnail);
+          setOldBanner(postData.banner);
 
           reset({
             title: postData.title,
@@ -54,7 +60,25 @@ const PostsForm: React.FC = () => {
   }, [id, reset]);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    console.log('ID danh mục đã chọn:', data.news_category_id);
+    // Kiểm tra nếu chưa có thumbnail hoặc banner
+    if (!thumbnailFile) {
+      notification.error({
+        message: 'Lỗi xác thực',
+        description: 'Ảnh thu nhỏ là bắt buộc!',
+        placement: 'topRight',
+      });
+      return;
+    }
+    if (!bannerFile) {
+      notification.error({
+        message: 'Lỗi xác thực',
+        description: 'Ảnh bìa là bắt buộc!',
+        placement: 'topRight',
+      });
+      return;
+    }
+  
+    // Nếu đã hợp lệ, tiếp tục gửi dữ liệu
     await addOrUpdatePost(
       {
         ...data,
@@ -63,16 +87,16 @@ const PostsForm: React.FC = () => {
       },
       id
     );
-
-    // Replace alert with Ant Design notification
+  
     notification.success({
       message: id ? 'Cập nhật bài viết thành công!' : 'Thêm bài viết thành công!',
       description: 'Bài viết của bạn đã được lưu thành công.',
       placement: 'topRight',
     });
-
+  
     nav('/admin/posts');
   };
+  
 
   return (
     <div className="container mt-5">
@@ -99,8 +123,16 @@ const PostsForm: React.FC = () => {
           </select>
           {errors.news_category_id && <span className="text-danger">{errors.news_category_id.message}</span>}
         </div>
+
+        {/* Show old thumbnail if available */}
+        {oldThumbnail && (
+          <div className="mb-3">
+            <label className="form-label">Ảnh thu nhỏ hiện tại:</label>
+            <img src={oldThumbnail} alt="Thumbnail cũ"   style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'contain' }} />
+          </div>
+        )}
         <div className="mb-3">
-          <label className="form-label">Ảnh thu nhỏ:</label>
+          <label className="form-label">Ảnh thu nhỏ mới:</label>
           <input
             type="file"
             className="form-control d-block"
@@ -110,9 +142,20 @@ const PostsForm: React.FC = () => {
               }
             }}
           />
+          {!thumbnailFile && (
+    <span className="text-danger">Ảnh thu nhỏ là bắt buộc</span>
+  )}
         </div>
+
+        {/* Show old banner if available */}
+        {oldBanner && (
+          <div className="mb-3">
+            <label className="form-label">Ảnh bìa hiện tại:</label>
+            <img src={oldBanner} alt="Banner cũ"   style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'contain' }} />
+          </div>
+        )}
         <div className="mb-3">
-          <label className="form-label">Ảnh bìa:</label>
+          <label className="form-label">Ảnh bìa mới:</label>
           <input
             type="file"
             className="form-control d-block"
@@ -122,7 +165,11 @@ const PostsForm: React.FC = () => {
               }
             }}
           />
+           {!bannerFile && (
+    <span className="text-danger">Ảnh bìa là bắt buộc</span>
+  )}
         </div>
+
         <div className="mb-3">
           <label className="form-label">Nội dung:</label>
           <textarea

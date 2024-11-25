@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { notification } from 'antd'; // Import the notification component
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Actor } from '../../../interface/Actor';
 import instance from '../../../server';
 
-
-
-
 const ActorDashboard = () => {
     const [actors, setActors] = useState<Actor[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [searchTerm, setSearchTerm] = useState<string>('');  
     const actorsPerPage = 7;
 
     useEffect(() => {
@@ -45,31 +42,6 @@ const ActorDashboard = () => {
         currentPage * actorsPerPage
     );
 
-    const handleDelete = async (id: number) => {
-        const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa diễn viên này?');
-        if (confirmDelete) {
-            try {
-                // Gọi API xóa diễn viên
-                await instance.delete(`/actor/${id}`);
-                // Cập nhật lại danh sách diễn viên sau khi xóa
-                setActors((prevActors) => prevActors.filter((actor) => actor.id !== id));
-                notification.success({
-                    message: 'Thành Công',
-                    description: 'Diễn viên đã được xóa thành công!',
-                    placement: 'topRight',
-                });
-            } catch (error) {
-                console.error('Lỗi khi xóa diễn viên:', error);
-                notification.error({
-                    message: 'Lỗi',
-                    description: 'Không thể xóa diễn viên!',
-                    placement: 'topRight',
-                });
-            }
-        }
-    };
-    
-
     const handlePageChange = (page: number) => setCurrentPage(page);
 
     const getPageNumbers = () => {
@@ -96,15 +68,14 @@ const ActorDashboard = () => {
         <div className="container mt-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <Link to={'/admin/actor/add'} className="btn btn-outline-primary">
-                <FontAwesomeIcon icon={faPlus} /> Thêm Diễn Viên
+                    <FontAwesomeIcon icon={faPlus} /> Thêm Diễn Viên
                 </Link>
                 <input
                     type="text"
                     placeholder="Tìm kiếm theo tên"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="form-control w-25 "
-                    
+                    className="form-control w-25"
                 />
             </div>
             <div className="table-responsive">
@@ -123,8 +94,11 @@ const ActorDashboard = () => {
                             <tr key={actor.id}>
                                 <td>{actor.id}</td>
                                 <td>
-                                        <img src={actor.photo ?? undefined} style={{ width: "80px", height: "120px", objectFit: 'cover' }} />
-                                    </td>
+                                    <img
+                                        src={actor.photo ?? undefined}
+                                        style={{ width: "80px", height: "120px", objectFit: 'cover' }}
+                                    />
+                                </td>
                                 <td>{actor.actor_name}</td>
                                 <td>{actor.country}</td>
                                 <td>
@@ -132,12 +106,6 @@ const ActorDashboard = () => {
                                         <Link to={`/admin/actor/edit/${actor.id}`} className="btn btn-warning btn-sm">
                                             <FontAwesomeIcon icon={faEdit} />
                                         </Link>
-                                        <button
-                                            onClick={() => handleDelete(actor.id)}
-                                            className="btn btn-danger btn-sm"
-                                        >
-                                            <FontAwesomeIcon icon={faTrashAlt} />
-                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -153,32 +121,30 @@ const ActorDashboard = () => {
                 </table>
             </div>
             <nav className="d-flex justify-content-center mt-4">
-    <ul className="pagination">
-        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-            <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>
-                Trước
-            </button>
-        </li>
-        {getPageNumbers().map((page, index) => (
-            <li key={index} className={`page-item ${page === currentPage ? 'active' : ''}`}>
-                {page === '...' ? (
-                    <span className="page-link">...</span>
-                ) : (
-                    <button className="page-link" onClick={() => handlePageChange(Number(page))}>
-                        {page}
-                    </button>
-                )}
-            </li>
-        ))}
-        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-            <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>
-                Tiếp
-            </button>
-        </li>
-    </ul>
-</nav>
-
-
+                <ul className="pagination">
+                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>
+                            Trước
+                        </button>
+                    </li>
+                    {getPageNumbers().map((page, index) => (
+                        <li key={index} className={`page-item ${page === currentPage ? 'active' : ''}`}>
+                            {page === '...' ? (
+                                <span className="page-link">...</span>
+                            ) : (
+                                <button className="page-link" onClick={() => handlePageChange(Number(page))}>
+                                    {page}
+                                </button>
+                            )}
+                        </li>
+                    ))}
+                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>
+                            Tiếp
+                        </button>
+                    </li>
+                </ul>
+            </nav>
         </div>
     );
 };

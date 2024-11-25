@@ -1,9 +1,9 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { usePostsContext } from '../../../Context/PostContext';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';  // Import the styles
-import './PostDashboard.css'
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import './PostDashboard.css';
 
 const PostDetailManager: React.FC = () => {
   const { postId } = useParams<{ postId: string }>(); // Lấy ID từ URL
@@ -43,12 +43,13 @@ const PostDetailManager: React.FC = () => {
       </style>
 
       <div className="content">
-        <ReactQuill 
-          value={post.content}
-          readOnly={true} 
-          theme="snow" 
-          modules={{ toolbar: false }}
-          formats={['bold', 'underline', 'link','image']}
+        <CKEditor
+          editor={ClassicEditor}
+          data={post.content}
+          config={{
+            toolbar: []
+          }}
+          disabled={true}
         />
       </div>
 

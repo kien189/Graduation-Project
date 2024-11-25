@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { notification } from 'antd'; // Import the notification component
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Director } from '../../../interface/Director';
@@ -10,7 +10,7 @@ import instance from '../../../server';
 const DirectorDashboard = () => {
     const [directors, setDirectors] = useState<Director[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [searchTerm, setSearchTerm] = useState<string>(''); 
     const directorsPerPage = 7;
 
     useEffect(() => {
@@ -42,30 +42,6 @@ const DirectorDashboard = () => {
         currentPage * directorsPerPage
     );
 
-    const handleDelete = async (id: number) => {
-        const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa đạo diễn này?');
-        if (confirmDelete) {
-            try {
-                // Gọi API xóa đạo diễn
-                await instance.delete(`/director/${id}`);
-                // Cập nhật lại danh sách đạo diễn sau khi xóa
-                setDirectors((prevDirectors) => prevDirectors.filter((director) => director.id !== id));
-                notification.success({
-                    message: 'Thành Công',
-                    description: 'Đạo diễn đã được xóa thành công!',
-                    placement: 'topRight',
-                });
-            } catch (error) {
-                console.error('Lỗi khi xóa đạo diễn:', error);
-                notification.error({
-                    message: 'Lỗi',
-                    description: 'Không thể xóa đạo diễn!',
-                    placement: 'topRight',
-                });
-            }
-        }
-    };
-
     const handlePageChange = (page: number) => setCurrentPage(page);
 
     const getPageNumbers = () => {
@@ -92,7 +68,7 @@ const DirectorDashboard = () => {
         <div className="container mt-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <Link to={'/admin/director/add'} className="btn btn-outline-primary">
-                <FontAwesomeIcon icon={faPlus} /> Thêm Đạo Diễn
+                    <FontAwesomeIcon icon={faPlus} /> Thêm Đạo Diễn
                 </Link>
                 <input
                     type="text"
@@ -131,12 +107,6 @@ const DirectorDashboard = () => {
                                         <Link to={`/admin/director/edit/${director.id}`} className="btn btn-warning btn-sm">
                                             <FontAwesomeIcon icon={faEdit} />
                                         </Link>
-                                        <button
-                                            onClick={() => handleDelete(director.id)}
-                                            className="btn btn-danger btn-sm"
-                                        >
-                                            <FontAwesomeIcon icon={faTrashAlt} />
-                                        </button>
                                     </div>
                                 </td>
                             </tr>

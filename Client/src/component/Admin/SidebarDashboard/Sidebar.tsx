@@ -34,7 +34,7 @@ const Sidebar = () => {
                     <li><NavLink to={'/admin/showtimes'} className={({ isActive }) => (isActive ? 'active' : '')}><FaCalendarAlt /> Quản lí xuất chiếu</NavLink></li>
                     <li><NavLink to={'/admin/orders'} className={({ isActive }) => (isActive ? 'active' : '')}><FaTag /> Quản lí đơn hàng</NavLink></li>
                     <li><NavLink to={'/admin/categories'} className={({ isActive }) => (isActive ? 'active' : '')}><FaList /> Quản lí thể loại</NavLink></li>
-                    <li><NavLink to={'/admin/countries'} className={({ isActive }) => (isActive ? 'active' : '')}><FaGlobe /> Quản lí khu vực</NavLink></li>
+                    {/* <li><NavLink to={'/admin/countries'} className={({ isActive }) => (isActive ? 'active' : '')}><FaGlobe /> Quản lí khu vực</NavLink></li> */}
                     <li><NavLink to={'/admin/combo'} className={({ isActive }) => (isActive ? 'active' : '')}><FaCogs /> Quản lí combo nước</NavLink></li>
                     <li><NavLink to={'/admin/cinemas'} className={({ isActive }) => (isActive ? 'active' : '')}><FaTheaterMasks /> Quản lí rạp chiếu phim</NavLink></li>
                     <li><NavLink to={'/admin/movies'} className={({ isActive }) => (isActive ? 'active' : '')}><FaFilm /> Quản lí phim</NavLink></li>

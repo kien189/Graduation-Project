@@ -9,6 +9,7 @@ import { Director } from '../../../interface/Director';
 import { useMovieContext } from '../../../Context/MoviesContext';
 import instance from '../../../server';
 import { MovieCategory } from '../../../interface/MovieCategory';
+import { notification } from 'antd';
 
 // Zod schema for form validation
 const movieSchema = z.object({
@@ -25,7 +26,7 @@ const movieSchema = z.object({
     .int()
     .min(5, 'Giới hạn độ tuổi tối thiểu là 5')
     .max(18, 'Giới hạn độ tuổi tối đa là 18'),
-  description: z.string().min(10, 'Mô tả phải có ít nhất 10 ký tự'),
+  description: z.string().min(10, 'Mô tả phải có ít nhất 10 ký tự').max(500,'Mô tả tối đa 500 ký tự'),
   duration: z
     .string()
     .min(1, 'Thời lượng là bắt buộc')
@@ -36,7 +37,7 @@ const movieSchema = z.object({
   posterFile: z.any().optional(),
   thumbnailFile: z.any().optional(), // Optional thumbnail
   country: z.string().min(1,'Tên quốc gia là bắt buộc'),
-  trailer: z.string().optional(), // Trailer URL validation (optional)
+  trailer: z.string().url("Link Trailer phải là URL hợp lệ."), // Trailer URL validation (optional)
 });
 
 type MovieFormValues = z.infer<typeof movieSchema>;
@@ -107,6 +108,8 @@ const MovieForm: React.FC = () => {
           });
           setCountry(movieData.country || '');  // Set country state correctly
           setTrailer(movieData.trailer || '');  // Set trailer state correctly
+          setPosterFile(movieData.poster); // URL ảnh poster cũ
+          setThumbnailFile(movieData.thumbnail); // URL ảnh thumbnail cũ
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -117,10 +120,26 @@ const MovieForm: React.FC = () => {
   }, [id, reset]);
 
   const onSubmit = async (data: MovieFormValues) => {
+    if (!thumbnailFile) {
+      notification.error({
+        message: 'Lỗi xác thực',
+        description: 'Ảnh thu nhỏ là bắt buộc!',
+        placement: 'topRight',
+      });
+      return;
+    }
+    if (!posterFile) {
+      notification.error({
+        message: 'Lỗi xác thực',
+        description: 'Ảnh bìa là bắt buộc!',
+        placement: 'topRight',
+      });
+      return;
+    }
     const updatedData = {
       ...data,
-      posterFile,
-      thumbnailFile,
+      posterFile: posterFile instanceof File ? posterFile : undefined,
+    thumbnailFile: thumbnailFile instanceof File ? thumbnailFile : undefined,
       country,
       trailer,
     };
@@ -294,10 +313,13 @@ const MovieForm: React.FC = () => {
         <div className="mb-3">
           <label className="form-label">Quốc gia</label>
           <input
-            type="text"
-            className="form-control"
-            {...register('country')}
-          />
+  type="text"
+  className="form-control"
+  {...register('country')}
+  value={country}
+  onChange={(e) => setCountry(e.target.value)}
+/>
+
           {errors.country && <p className="text-danger">{errors.country.message}</p>}
         </div>
 
@@ -312,25 +334,44 @@ const MovieForm: React.FC = () => {
           />
           {errors.trailer && <p className="text-danger">{errors.trailer.message}</p>}
         </div>
+ {/* Thumbnail */}
+<div className="mb-3">
+  <label className="form-label">Thumbnail</label>
+  {thumbnailFile && (
+    <div className="mb-2">
+      <img
+        src={typeof thumbnailFile === 'string' ? thumbnailFile : URL.createObjectURL(thumbnailFile)}
+        alt="Thumbnail cũ"
+        style={{ width: '150px', height: 'auto' }}
+      />
+    </div>
+  )}
+  <input
+    type="file"
+    className="form-control"
+    onChange={(e) => setThumbnailFile(e.target.files?.[0] || null)}
+  />
+</div>
 
-        {/* Poster File */}
-        <div className="mb-3">
-          <label className="form-label">Poster</label>
-          <input
-            type="file"
-            className="form-control"
-            onChange={(e) => setPosterFile(e.target.files?.[0] || null)}
-          />
-        </div>
-          {/* Thumbnail */}
-          <div className="mb-3">
-          <label className="form-label">Thumbnail</label>
-          <input
-            type="file"
-            className="form-control"
-            onChange={(e) => setThumbnailFile(e.target.files?.[0] || null)}
-          />
-        </div>
+       {/* Poster File */}
+<div className="mb-3">
+  <label className="form-label">Poster</label>
+  {posterFile && (
+    <div className="mb-2">
+      <img
+        src={typeof posterFile === 'string' ? posterFile : URL.createObjectURL(posterFile)}
+        alt="Poster cũ"
+        style={{ width: '150px', height: 'auto' }}
+      />
+    </div>
+  )}
+  <input
+    type="file"
+    className="form-control"
+    onChange={(e) => setPosterFile(e.target.files?.[0] || null)}
+  />
+</div>
+
 
         <button type="submit" className="btn btn-primary btn-lg w-100">
           {id ? 'Cập nhật phim' : 'Thêm phim'}

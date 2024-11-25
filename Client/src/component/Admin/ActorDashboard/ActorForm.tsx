@@ -20,11 +20,11 @@ const actorSchema = z.object({
     .max(500, "Mô tả không được vượt quá 500 ký tự."),
 });
 
-
 const ActorForm = () => {
   const { id } = useParams<{ id: string }>();
   const nav = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [existingPhoto, setExistingPhoto] = useState<string | null>(null); // State để lưu ảnh cũ
 
   const {
     handleSubmit,
@@ -41,6 +41,7 @@ const ActorForm = () => {
         try {
           const { data } = await instance.get(`/actor/${id}`);
           reset(data.data); // Reset form với dữ liệu đã lấy
+          setExistingPhoto(data.data.photo); // Lưu URL ảnh cũ
         } catch (error) {
           console.error("Lỗi khi lấy dữ liệu diễn viên:", error);
         }
@@ -51,6 +52,15 @@ const ActorForm = () => {
   }, [id, reset]);
 
   const handleFormSubmit = async (data: Actor) => {
+    if (!selectedFile) {
+      notification.error({
+        message: 'Lỗi xác thực',
+        description: 'Ảnh đại diện là bắt buộc!',
+        placement: 'topRight',
+      });
+      return;
+    }
+  
     const formData = new FormData();
     formData.append("actor_name", data.actor_name);
     formData.append("country", data.country);
@@ -60,9 +70,14 @@ const ActorForm = () => {
       formData.append("photo", selectedFile); // Thêm file vào FormData
     }
 
+    // Thêm _method để mô phỏng PUT request
+    if (id) {
+      formData.append("_method", "PUT");
+    }
+
     try {
       if (id) {
-        await instance.put(`/actor/${id}`, formData, {
+        await instance.post(`/actor/${id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         }); // Cập nhật diễn viên
         notification.success({
@@ -134,11 +149,20 @@ const ActorForm = () => {
           )}
         </div>
 
-        {/* Ảnh */}
+        {/* Ảnh cũ và chọn ảnh mới */}
         <div className="mb-3">
           <label htmlFor="photo" className="form-label">
             Ảnh
           </label>
+          {existingPhoto && !selectedFile && (
+            <div>
+              <img
+                src={existingPhoto}
+                alt="Diễn viên"
+                style={{ width: "150px", height: "auto" }}
+              />
+            </div>
+          )}
           <input
             type="file"
             className={`form-control ${errors.photo ? "is-invalid" : ""}`}

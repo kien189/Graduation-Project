@@ -1,176 +1,21 @@
-
-
-.movies-dashboard {
-    padding: 20px;
-    background: rgb(229, 240, 242); /* Nền xanh nhạt */
-    min-height: 170vh;
-    color: #333;
-    font-family: 'Roboto', sans-serif;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.movies-dashboard h2 {
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 40px;
-    letter-spacing: 1.2px;
-    color: #007aff;
-    text-transform: uppercase;
-}
-
-/* Actions container */
-/* Actions container */
-.actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 20px;
-}
-
-/* Search input styling */
-.search-input {
+.custom-file-input {
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-    margin-left: 20px; /* Space between the button and search input */
-}
-
-/* Add movie button styling */
-.add-movie-btn {
-    padding: 10px 20px;
-    background-color: #f39c12; /* Button color */
-    border: none;
-    border-radius: 5px;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: #f8f9fa;
     transition: background-color 0.3s ease;
-    text-transform: uppercase;
+  }
+
+  .custom-file-input:hover {
+    background-color: #e9ecef;
+  }
+
+  .form-label {
+    font-size: 1.1rem;
     font-weight: bold;
-    text-decoration: none;
-}
-
-.add-movie-btn:hover {
-    background: linear-gradient(145deg, #a5f3ff, #00d2ff);
-    transform: translateY(-5px);
-}
-
-
-/* Table container styling */
-.table-container-movie {
-    width: 100%;
-    max-width: 1300px;
-    overflow-x: auto;
-    border-radius: 8px;
-    background-color: #f4f6f7; /* Background sáng hơn */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Nhẹ hơn */}
-
-/* Table styling */
-.movie-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-/* Header styling */
-.movie-table th {
-    background: #e0f7fa;
-    color: #00796b;
-    text-align: center;
-    padding: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    font-size: 1rem;
-}
-
-/* Row styling */
-.movie-table td {
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.8);
     color: #333;
-    text-align: center;
-    border-bottom: 1px solid rgba(220, 220, 220, 0.6);
-    text-align: center;
-}
+  }
 
-/* Hover effect for rows */
-.movie-table tbody tr:hover {
-    background-color: rgba(0, 198, 255, 0.1);
-}
-
-/* Image styling */
-.movie-table img {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-}
-
-/* Action buttons */
-.action-buttons {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
-
-/* Button styles */
-.action-buttons button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #007aff;
-    font-size: 1.5rem;
-}
-
-/* Pagination styles */
-.pagination {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin-top: 20px;
-}
-
-.prev-btn, .next-btn, .page-btn {
-    padding: 10px 15px;
-    margin: 0 5px;
-    background-color: #00796b; /* Button color */
-    border: none;
-    border-radius: 5px;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.page-btn.active {
-    background-color: #004d40; /* Active button color */
-}
-
-.prev-btn:disabled,
-.next-btn:disabled {
-    background-color: #b2dfdb; /* Disabled button color */
-    cursor: not-allowed; /* Cursor for disabled */
-}
-
-.prev-btn:hover:not(:disabled),
-.next-btn:hover:not(:disabled),
-.page-btn:hover:not(.active) {
-    background-color: #004d40; /* Hover color */
-}
-
-/* Responsive design for mobile */
-@media (max-width: 768px) {
-    .movie-table th, .movie-table td {
-        font-size: 0.9rem;
-        padding: 10px;
-    }
-
-    .add-movie-btn {
-        width: 100%;
-        font-size: 1rem;
-    }
-}
-.truncate-text {
-    white-space: nowrap;         /* Prevents text from wrapping to a new line */
-    overflow: hidden;            /* Hides the overflowed text */
-    text-overflow: ellipsis;     /* Adds "..." when text overflows */
-}
+  .mb-4 {
+    margin-bottom: 1.5rem;
+  }

@@ -24,6 +24,7 @@ const DirectorForm = () => {
   const { id } = useParams<{ id: string }>();
   const nav = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [existingPhoto, setExistingPhoto] = useState<string | null>(null); // State để lưu ảnh cũ
 
   const {
     handleSubmit,
@@ -40,6 +41,7 @@ const DirectorForm = () => {
         try {
           const { data } = await instance.get(`/director/${id}`);
           reset(data.data); // Reset form với dữ liệu đã lấy
+          setExistingPhoto(data.data.photo)
         } catch (error) {
           console.error("Lỗi khi lấy dữ liệu đạo diễn:", error);
         }
@@ -50,20 +52,34 @@ const DirectorForm = () => {
   }, [id, reset]);
 
   const handleFormSubmit = async (data: Director) => {
+    if (!selectedFile) {
+      notification.error({
+        message: 'Lỗi xác thực',
+        description: 'Ảnh đại diện là bắt buộc!',
+        placement: 'topRight',
+      });
+      return;
+    }
     const formData = new FormData();
     formData.append("director_name", data.director_name);
     formData.append("country", data.country);
     formData.append("link_wiki", data.link_wiki);
     formData.append("descripcion", data.descripcion || "");
+    
+    // Thêm _method vào FormData
+    if (id) {
+      formData.append("_method", "PUT"); // Đặt phương thức PUT
+    }
+  
     if (selectedFile) {
       formData.append("photo", selectedFile); // Thêm file vào FormData
     }
-
+  
     try {
       if (id) {
-        await instance.put(`/director/${id}`, formData, {
+        await instance.post(`/director/${id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
-        }); // Cập nhật đạo diễn
+        }); // Sử dụng POST nhưng với _method là PUT
         notification.success({
           message: "Cập nhật đạo diễn thành công!",
         });
@@ -75,7 +91,7 @@ const DirectorForm = () => {
           message: "Thêm đạo diễn thành công!",
         });
       }
-      nav("/admin/director"); // Chuyển hướng tới trang danh sách đạo diễn hoặc trang cần thiết
+      nav("/admin/director"); // Chuyển hướng tới trang danh sách đạo diễn
     } catch (error) {
       console.error("Lỗi khi gửi dữ liệu đạo diễn:", error);
       notification.error({
@@ -83,6 +99,7 @@ const DirectorForm = () => {
       });
     }
   };
+  
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -134,10 +151,19 @@ const DirectorForm = () => {
         </div>
 
         {/* Ảnh */}
-        <div className="mb-3">
+       <div className="mb-3">
           <label htmlFor="photo" className="form-label">
             Ảnh
           </label>
+          {existingPhoto && !selectedFile && (
+            <div>
+              <img
+                src={existingPhoto}
+                alt="Đạo diễn"
+                style={{ width: "150px", height: "auto" }}
+              />
+            </div>
+          )}
           <input
             type="file"
             className={`form-control ${errors.photo ? "is-invalid" : ""}`}
@@ -148,7 +174,6 @@ const DirectorForm = () => {
             <span className="text-danger">{errors.photo.message}</span>
           )}
         </div>
-
         {/* Link Wiki */}
         <div className="mb-3">
           <label htmlFor="link_wiki" className="form-label">

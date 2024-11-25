@@ -14,7 +14,7 @@ export interface Movie {
     age_limit: number | null;
     description: string | null;
     trailer: string | null;
-    country: string | null;
+    country: string ;
     rating: string | null;
     views: number | null;
     like: number | null;
