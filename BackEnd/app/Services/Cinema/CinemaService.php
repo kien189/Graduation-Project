@@ -8,7 +8,8 @@ use App\Models\MovieInCinema;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Traits\AuthorizesInService;
-
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 /**
  * Class LocationService.
@@ -16,58 +17,65 @@ use App\Traits\AuthorizesInService;
 class CinemaService
 {
     use AuthorizesInService;
-    public function index(): Collection
+
+    protected function filterByRole($query)
     {
-        return Cinema::with('Location')->orderByDesc('created_at')
-            ->get();
+        $user = Auth::user();
+
+        if (!$user) {
+            // Người chưa đăng nhập: chỉ lấy rạp có status = 1
+            $query->where('status', 1);
+        } elseif ($user->hasRole('manager')) {
+            // Manager: chỉ lấy rạp theo cinema_id của họ
+            $query->where('id', $user->cinema_id);
+        } elseif (!$user->hasRole('admin')) {
+            // Người dùng không phải admin: chỉ lấy rạp có status = 1
+            $query->where('status', 1);
+        }
+
+        return $query;
     }
 
+    public function index()
+    {
+        $cinemas = Cinema::query()->orderByDesc('created_at');
+        return $this->filterByRole($cinemas)->get();
+    }
 
     public function store(array $data): Cinema
     {
-
         return Cinema::create($data);
-    }
-    public function storeMovie(array $data): MovieInCinema
-    {
-
-        return MovieInCinema::create($data);
     }
 
     public function update(int $id, array $data): Cinema
     {
-
-        $cinema = Cinema::findOrFail($id);
+        $cinema = $this->filterByRole(Cinema::query()->where('id', $id))->firstOrFail();
         $cinema->update($data);
-
         return $cinema;
     }
 
-
     public function delete(int $id): ?bool
     {
-
-        $cinema = Cinema::findOrFail($id);
+        $cinema = $this->filterByRole(Cinema::query()->where('id', $id))->firstOrFail();
         return $cinema->delete();
     }
-    // public function get(int $id): Cinema
-    // {
-    //     $cinema = Cinema::findOrFail($id);
-    //     return $cinema;
-    // }
 
     public function get($identifier): Cinema
     {
-        $Cinema = Cinema::query()
-            ->when(is_numeric($identifier), function ($query) use ($identifier) {
-                return $query->where('id', $identifier);
-            }, function ($query) use ($identifier) {
-                return $query->where('slug', $identifier);
-            })
-            ->firstOrFail();
+        $cinema = Cinema::query();
 
-        return $Cinema;
+        $this->filterByRole($cinema);
+
+        $cinema->when(is_numeric($identifier), function ($query) use ($identifier) {
+            return $query->where('id', $identifier);
+        }, function ($query) use ($identifier) {
+            return $query->where('slug', $identifier);
+        });
+
+        return $cinema->firstOrFail();
     }
+
+
     public function showCinemaByLocation(int $location_id)
     {
         $location = Location::where('id', $location_id)->first();

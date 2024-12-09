@@ -17,6 +17,8 @@ return new class extends Migration {
             $table->double('price');
             $table->integer('volume');
             $table->boolean('status')->default(true);
+            $table->unsignedBigInteger('cinema_id')->nullable();
+            $table->foreign('cinema_id')->references('id')->on('cinema')->onDelete('cascade');
             $table->timestamps();
         });
     }

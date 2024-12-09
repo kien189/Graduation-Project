@@ -37,11 +37,11 @@ class Cinema extends Model
     //     return $this->hasMany(Showtime::class);
     // }
 
-    public function rooms()    
+    public function rooms()
     {
         return $this->hasMany(Room::class);
     }
-   
+
 
     protected static function booted()
     {

@@ -15,6 +15,7 @@ class Combo extends Model
         'price',
         'descripton',
         'volume',
+        'cinema_id',
         'status',
     ];
 }

@@ -3,62 +3,70 @@
 namespace App\Services\News;
 
 use App\Models\News;
-use App\Models\NewsCategory;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Storage;
-use App\Traits\AuthorizesInService;
+use Illuminate\Support\Facades\Auth;
 
-/**
- * Class LocationService.
- */
 class NewService
 {
-    use AuthorizesInService;
+    protected function filterByCinema($query)
+    {
+        $user = Auth::user();
+
+
+        if (!$user) {
+            // Người chưa đăng nhập: chỉ lấy rạp có status = 1
+            $query->where('status', 1);
+        } elseif ($user->hasRole('manager')) {
+            // Manager: chỉ lấy rạp theo cinema_id của họ
+            $query->where('cinema_id', $user->cinema_id);
+        } elseif (!$user->hasRole('admin')) {
+            // Người dùng không phải admin: chỉ lấy rạp có status = 1
+            $query->where('status', 1);
+        }
+
+        return $query;
+    }
+
     public function index(): Collection
     {
-        return News::with('user', 'newsCategory')->orderByDesc('created_at')->get();
+        $query = News::with(['user', 'newsCategory'])->orderByDesc('created_at');
+        return $this->filterByCinema($query)->get();
     }
 
-
-    public function store(array $data)
+    public function store(array $data): News
     {
+        $user = Auth::user();
+        if ($user && $user->hasRole('manager')) {
+            $data['cinema_id'] = $user->cinema_id;
+        }
 
-        $news = News::create($data);
-        return $news;
+        return News::create($data);
     }
 
-    public function update(int $id, array $data)
+    public function update(int $id, array $data): News
     {
-
-        $news = News::findOrFail($id);
+        $news = $this->filterByCinema(News::where('id', $id))->firstOrFail();
         $news->update($data);
         return $news;
     }
 
-
-    public function delete(int $id)
+    public function delete(int $id): ?bool
     {
-
-        $news = News::findOrFail($id);
+        $news = $this->filterByCinema(News::where('id', $id))->firstOrFail();
         return $news->delete();
     }
 
-    // public function show(int $id)
-    // {
-    //     $news = News::with('newsCategory','user')->findOrFail($id);
-    //     return $news;
-    // }
-    public function show($identifier)
+    public function show($identifier): News
     {
+        $query = News::with(['newsCategory', 'movie', 'user'])
+            ->when(is_numeric($identifier), function ($q) use ($identifier) {
+                return $q->where('id', $identifier);
+            }, function ($q) use ($identifier) {
+                return $q->where('slug', $identifier);
+            });
 
-        $news = News::with(['newsCategory', 'movie', 'user'])
-            ->when(is_numeric($identifier), function ($query) use ($identifier) {
-                return $query->where('id', $identifier);
-            }, function ($query) use ($identifier) {
-                return $query->where('slug', $identifier);
-            })
-            ->firstOrFail();
-        $news->increment('views');
+        $news = $this->filterByCinema($query)->firstOrFail();
+        $news->increment('views'); // Tăng số lượt xem
         return $news;
     }
 }

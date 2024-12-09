@@ -21,6 +21,8 @@ return new class extends Migration
             $table->integer('row_vip_seat');
             $table->integer('row_couple_seat');
             $table->json('seat_structure')->nullable();
+            $table->unsignedBigInteger('cinema_id')->nullable();
+            $table->foreign('cinema_id')->references('id')->on('cinema')->onDelete('cascade');
             $table->timestamps();
         });
     }

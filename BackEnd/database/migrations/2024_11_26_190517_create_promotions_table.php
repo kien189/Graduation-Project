@@ -20,6 +20,8 @@ return new class extends Migration
             $table->dateTime('valid_from');
             $table->dateTime('valid_to');
             $table->boolean('is_active')->default(true);
+            $table->unsignedBigInteger('cinema_id')->nullable();
+            $table->foreign('cinema_id')->references('id')->on('cinema')->onDelete('cascade');
             $table->timestamps();
         });
     }

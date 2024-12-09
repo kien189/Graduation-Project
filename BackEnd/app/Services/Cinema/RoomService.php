@@ -3,112 +3,66 @@
 namespace App\Services\Cinema;
 
 use App\Models\Room;
-use App\Models\Seats;
 use Illuminate\Database\Eloquent\Collection;
-use App\Traits\AuthorizesInService;
+use Illuminate\Support\Facades\Auth;
 
-/**
- * Class LocationService.
- */
 class RoomService
 {
-    use AuthorizesInService;
+    protected function filterByRole($query)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            abort(403, 'Unauthorized');
+        }
+
+        if ($user->hasRole('manager')) {
+            // Manager chỉ được phép truy cập phòng trong rạp của họ
+            $query->where('cinema_id', $user->cinema_id);
+        }
+
+        return $query;
+    }
 
     public function index(): Collection
     {
-
-        return Room::with('seatmap')->orderByDesc('created_at')->get();
+        $rooms = Room::with('seatmap')->orderByDesc('created_at');
+        return $this->filterByRole($rooms)->get();
     }
-
 
     public function store(array $data): Room
     {
+        $user = Auth::user();
 
+        if (!$user || !$user->hasRole('manager')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $data['cinema_id'] = $user->cinema_id;
         return Room::create($data);
     }
-    public function getRoomByCinema(int $cinemaId): Collection
-    {
-        return Room::where('cinema_id', $cinemaId)->get();
-    }
-
 
     public function update(int $id, array $data): Room
     {
-
-        $room = Room::findOrFail($id);
-
-        // Lưu trữ giá trị volume cũ
-        $oldVolume = $room->volume;
-
-        // Cập nhật thông tin phòng
+        $room = $this->filterByRole(Room::where('id', $id))->firstOrFail();
         $room->update($data);
-
-        // Nếu volume thay đổi
-        if (isset($data['volume']) && $data['volume'] !== $oldVolume) {
-            $newVolume = (int) $data['volume'];
-            $seatsPerRow = 15;
-
-            // Tính số hàng mới cần thiết
-            $numberOfRows = ceil($newVolume / $seatsPerRow);
-            $existingSeats = Seats::where('room_id', $room->id)->get();
-
-            // Xóa ghế nếu volume giảm
-            if ($newVolume < $oldVolume) {
-                $seatsToDelete = $existingSeats->slice($newVolume);
-                foreach ($seatsToDelete as $seat) {
-                    $seat->delete();
-                }
-            }
-
-            // Thêm ghế nếu volume tăng
-            if ($newVolume > $oldVolume) {
-                $existingRows = $existingSeats->pluck('row')->unique();
-                $existingSeatsCount = $existingSeats->count();
-
-                // Thêm ghế cho hàng mới
-                for ($rowIndex = 0; $rowIndex < $numberOfRows; $rowIndex++) {
-                    $row = chr(65 + $rowIndex);
-                    for ($seatNumber = 1; $seatNumber <= $seatsPerRow; $seatNumber++) {
-                        $seatIndex = ($rowIndex * $seatsPerRow) + $seatNumber;
-                        if ($seatIndex > $existingSeatsCount && $seatIndex <= $newVolume) {
-                            Seats::create([
-                                'room_id' => $room->id,
-                                'row' => $row,
-                                'number' => $seatNumber,
-                            ]);
-                        }
-                    }
-                }
-            }
-        }
-
         return $room;
     }
 
-
-
     public function delete(int $id): ?bool
     {
-
-        $room = Room::findOrFail($id);
+        $room = $this->filterByRole(Room::where('id', $id))->firstOrFail();
         return $room->delete();
     }
 
     public function get(int $id): Room
     {
-        $room = Room::findOrFail($id);
-        return $room;
+        return $this->filterByRole(Room::where('id', $id))->firstOrFail();
     }
 
-    // public function getShowtimesByMovieName(string $movie_name)
-    // {
-    //     // Tìm kiếm phim dựa trên tên phim
-    //     $movie = Movie::where('movie_name', 'like', '%' . $movie_name . '%')->first();
-
-    //     if (!$movie) {
-    //         throw new ModelNotFoundException('Movie not found');
-    //     }
-    //     return $movie->showtimes;
-    // }
-
+    public function getRoomByCinema(int $cinemaId): Collection
+    {
+        $rooms = Room::where('cinema_id', $cinemaId);
+        return $this->filterByRole($rooms)->get();
+    }
 }

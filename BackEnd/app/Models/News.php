@@ -21,6 +21,7 @@ class News extends Model
         'movie_id',
         'views',
         'status',
+        'cinema_id',
     ];
 
     public function newsCategory()

@@ -52,6 +52,7 @@ import { UserProfile } from "../../interface/UserProfile";
     useEffect(() => {
       const fetchCinemas = async () => {
         try {
+
             const response = await instance.get("/cinema");
             const cinemaData = response.data.data;
             if (Array.isArray(cinemaData)) {

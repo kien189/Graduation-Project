@@ -27,7 +27,7 @@ class PromotionController extends Controller
             'valid_to' => 'required|date|after_or_equal:valid_from',
             'is_active' => 'required|boolean',
         ]);
-
+        $validated['cinema_id'] = Auth::user()->cinema_id;
         $promotion = Promotion::create($validated);
 
         return response()->json(['message' => 'Tạo mã khuyến mãi thành công.', 'promotion' => $promotion]);

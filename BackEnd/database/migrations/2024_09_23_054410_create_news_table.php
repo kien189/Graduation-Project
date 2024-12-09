@@ -23,7 +23,9 @@ return new class extends Migration
             $table->longText('content')->nullable();
             $table->integer('views')->nullable();
             $table->boolean('status')->default(true);
+            $table->unsignedBigInteger('cinema_id')->nullable();
             $table->timestamps();
+            $table->foreign('cinema_id')->references('id')->on('cinema')->onDelete('cascade');
             $table->foreign('movie_id')->references('id')->on('movies')->onDelete('cascade');
             $table->foreign('news_category_id')->references('id')->on('news_category')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

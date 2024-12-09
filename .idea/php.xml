@@ -133,9 +133,24 @@
       <path value="$PROJECT_DIR$/BackEnd/vendor/theseer/tokenizer" />
       <path value="$PROJECT_DIR$/BackEnd/vendor/pusher/pusher-php-server" />
       <path value="$PROJECT_DIR$/BackEnd/vendor/tijsverkoyen/css-to-inline-styles" />
+      <path value="$PROJECT_DIR$/BackEnd/vendor/picqer/php-barcode-generator" />
+      <path value="$PROJECT_DIR$/BackEnd/vendor/enlightn/security-checker" />
+      <path value="$PROJECT_DIR$/BackEnd/vendor/firebase/php-jwt" />
+      <path value="$PROJECT_DIR$/BackEnd/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/BackEnd/vendor/bacon/bacon-qr-code" />
+      <path value="$PROJECT_DIR$/BackEnd/vendor/phpseclib/phpseclib" />
+      <path value="$PROJECT_DIR$/BackEnd/vendor/spatie/laravel-permission" />
+      <path value="$PROJECT_DIR$/BackEnd/vendor/spatie/laravel-validation-rules" />
+      <path value="$PROJECT_DIR$/BackEnd/vendor/milon/barcode" />
+      <path value="$PROJECT_DIR$/BackEnd/vendor/league/oauth1-client" />
+      <path value="$PROJECT_DIR$/BackEnd/vendor/simplesoftwareio/simple-qrcode" />
+      <path value="$PROJECT_DIR$/BackEnd/vendor/dasprid/enum" />
+      <path value="$PROJECT_DIR$/BackEnd/vendor/laravel/socialite" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.1">
+    <option name="suggestChangeDefaultLanguageLevel" value="false" />
+  </component>
   <component name="PhpStanOptionsConfiguration">
     <option name="transferred" value="true" />
   </component>

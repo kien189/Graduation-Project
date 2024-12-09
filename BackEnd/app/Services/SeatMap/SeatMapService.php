@@ -4,39 +4,51 @@ namespace App\Services\SeatMap;
 
 use App\Models\SeatMap;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 
 class SeatMapService
 {
+    protected function filterByCinema($query)
+    {
+        $user = Auth::user();
+        if ($user && $user->hasRole('manager')) {
+            // Manager chỉ được thao tác với SeatMap thuộc rạp của mình
+            $query->where('cinema_id', $user->cinema_id);
+        }
+        return $query;
+    }
+
     public function getAll(): Collection
     {
-        return SeatMap::all();
+        $query = SeatMap::query();
+        return $this->filterByCinema($query)->get();
     }
 
     public function getById(int $id): SeatMap
     {
-        return SeatMap::findOrFail($id);
+        $query = SeatMap::where('id', $id);
+        return $this->filterByCinema($query)->firstOrFail();
     }
 
     public function create(array $data): SeatMap
     {
-        // $data['seat_structure'] = json_encode($data['seat_structure'] ?? []);
+        $user = Auth::user();
+        if ($user && $user->hasRole('manager')) {
+            $data['cinema_id'] = $user->cinema_id;
+        }
         return SeatMap::create($data);
     }
 
     public function update(int $id, array $data): SeatMap
     {
-        $seatMap = SeatMap::findOrFail($id);
-        // if (isset($data['seat_structure'])) {
-        //     $data['seat_structure'] = json_encode($data['seat_structure']);
-        // }
+        $seatMap = $this->getById($id); // Tự động lọc theo quyền của người dùng
         $seatMap->update($data);
         return $seatMap;
     }
 
     public function delete(int $id): bool
     {
-        $seatMap = SeatMap::findOrFail($id);
+        $seatMap = $this->getById($id); // Tự động lọc theo quyền của người dùng
         return $seatMap->delete();
     }
 }

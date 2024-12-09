@@ -24,6 +24,7 @@ class VorcherSeeder extends Seeder
                 'valid_from' => '2024-11-01 00:00:00',
                 'valid_to' => '2024-12-31 23:59:59',
                 'is_active' => true,
+                'cinema_id' => rand(1, 198),
             ];
         }
 

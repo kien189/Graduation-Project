@@ -67,6 +67,7 @@ class News extends Seeder
                 'banner' => $thumbnail,
                 'thumnail' => $thumbnail,
                 'views' => rand(20, 50),
+                'cinema_id' => rand(1, 198),
                 'news_category_id' => $news_category->random(),
                 'created_at' => $this->randomDate('2024-01-01', now()),
                 'updated_at' => now(),

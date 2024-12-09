@@ -17,5 +17,6 @@ class Promotion extends Model
         'valid_from',
         'valid_to',
         'is_active',
+        'cinema_id',
     ];
 }

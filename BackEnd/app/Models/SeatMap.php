@@ -9,6 +9,7 @@ class SeatMap extends Model
     protected $table = "seat_map";
     protected $fillable = [
         'name',
+        'cinema_id',
         'description',
         'matrix_row',
         'matrix_column',

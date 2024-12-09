@@ -1,48 +1,56 @@
 <?php
-
 namespace App\Services\Combo;
 
 use App\Models\Combo;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Traits\AuthorizesInService;
+use Illuminate\Support\Facades\Auth;
 
-/**
- * Class LocationService.
- */
 class ComboService
 {
-    use AuthorizesInService;
-    public function index(): Collection
+    protected function filterByCinema($query)
     {
-        return Combo::orderByDesc('created_at')->get();
+        $user = Auth::user();
+
+        if ($user && $user->hasRole('manager')) {
+            // Manager chỉ thấy combo của rạp mà họ quản lý
+            $query->where('cinema_id', $user->cinema_id);
+        }
+
+        return $query;
     }
 
+    public function index(): Collection
+    {
+        $query = Combo::orderByDesc('created_at');
+        return $this->filterByCinema($query)->get();
+    }
 
     public function store(array $data): Combo
     {
-        // $this->authorizeInService('create', Combo::class);
+        $user = Auth::user();
+
+        if ($user && $user->hasRole('manager')) {
+            $data['cinema_id'] = $user->cinema_id;
+        }
+
         return Combo::create($data);
     }
 
     public function update(int $id, array $data): Combo
     {
-
-        $combo = Combo::findOrFail($id);
+        $combo = $this->filterByCinema(Combo::where('id', $id))->firstOrFail();
         $combo->update($data);
         return $combo;
     }
 
-
     public function delete(int $id): ?bool
     {
-
-        $combo = Combo::findOrFail($id);
+        $combo = $this->filterByCinema(Combo::where('id', $id))->firstOrFail();
         return $combo->delete();
     }
+
     public function get(int $id): Combo
     {
-        $combo = Combo::findOrFail($id);
-        return $combo;
+        return $this->filterByCinema(Combo::where('id', $id))->firstOrFail();
     }
 }

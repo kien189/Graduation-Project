@@ -6,8 +6,6 @@
       <sourceFolder url="file://$MODULE_DIR$/BackEnd/database/factories" isTestSource="false" packagePrefix="Database\Factories\" />
       <sourceFolder url="file://$MODULE_DIR$/BackEnd/database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
       <sourceFolder url="file://$MODULE_DIR$/BackEnd/tests" isTestSource="true" packagePrefix="Tests\" />
-      <sourceFolder url="file://$MODULE_DIR$/BackEnd/tests/Feature" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/BackEnd/tests/Unit" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/anhskohbo/no-captcha" />
       <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/carbonphp/carbon-doctrine-types" />
@@ -124,6 +122,19 @@
       <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/webmozart/assert" />
+      <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/bacon/bacon-qr-code" />
+      <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/dasprid/enum" />
+      <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/enlightn/security-checker" />
+      <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/firebase/php-jwt" />
+      <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/laravel/socialite" />
+      <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/league/oauth1-client" />
+      <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/milon/barcode" />
+      <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/paragonie/constant_time_encoding" />
+      <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/phpseclib/phpseclib" />
+      <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/picqer/php-barcode-generator" />
+      <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/simplesoftwareio/simple-qrcode" />
+      <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/spatie/laravel-permission" />
+      <excludeFolder url="file://$MODULE_DIR$/BackEnd/vendor/spatie/laravel-validation-rules" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

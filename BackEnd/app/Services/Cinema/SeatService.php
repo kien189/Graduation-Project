@@ -21,27 +21,6 @@ class SeatService
 
 
 
-
-
-    // public function store(array $data): Seats
-    // {
-    //     return Seats::create($data);
-    // }
-
-    // public function update(int $id, array $data): Seats
-    // {
-    //     $seat = Seats::findOrFail($id);
-    //     $seat->update($data);
-
-    //     return $seat;
-    // }
-
-
-    // public function delete(int $id): ?bool
-    // {
-    //     $seat = Seats::findOrFail($id);
-    //     return $seat->delete();
-    // }
     public function get(int $showtime_id)
     {
         $showtime = Showtime::with('seats')->find($showtime_id);
@@ -50,7 +29,4 @@ class SeatService
         }
         return $showtime->seats;
     }
-
-
-
 }
