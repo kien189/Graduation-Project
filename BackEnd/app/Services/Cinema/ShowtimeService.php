@@ -41,6 +41,32 @@ class ShowtimeService
     {
         return Showtime::create($data);
     }
+    
+    public function generateShowtimes(array $data): array
+    {
+        $openingTime = Carbon::createFromFormat('H:i', $data['opening_time']);
+        $closingTime = Carbon::createFromFormat('H:i', $data['closing_time']);
+        $duration = $data['duration'];
+        $price = $data['price'];
+
+        $showtimes = [];
+        while ($openingTime->addMinutes($duration)->lte($closingTime)) {
+            $startTime = $openingTime->copy()->subMinutes($duration)->format('H:i:s');
+            $endTime = $openingTime->format('H:i:s');
+
+            $showtimes[] = Showtime::create([
+                'room_id' => $data['room_id'],
+                'movie_id' => $data['movie_id'],
+                'showtime_date' => $data['date'],
+                'showtime_start' => $startTime,
+                'showtime_end' => $endTime,
+                'price' => $price,
+                'status' => '1',
+            ]);
+        }
+
+        return $showtimes;
+    }
 
     public function update(int $id, array $data): Showtime
     {
@@ -84,31 +110,5 @@ class ShowtimeService
         }
 
         return $this->filterByRole($movie->showtimes()->getQuery())->get();
-    }
-
-    public function generateShowtimes(array $data): array
-    {
-        $openingTime = Carbon::createFromFormat('H:i', $data['opening_time']);
-        $closingTime = Carbon::createFromFormat('H:i', $data['closing_time']);
-        $duration = $data['duration'];
-        $price = $data['price'];
-
-        $showtimes = [];
-        while ($openingTime->addMinutes($duration)->lte($closingTime)) {
-            $startTime = $openingTime->copy()->subMinutes($duration)->format('H:i:s');
-            $endTime = $openingTime->format('H:i:s');
-
-            $showtimes[] = Showtime::create([
-                'room_id' => $data['room_id'],
-                'movie_id' => $data['movie_id'],
-                'showtime_date' => $data['date'],
-                'showtime_start' => $startTime, 
-                'showtime_end' => $endTime,
-                'price' => $price,
-                'status' => '1',
-            ]);
-        }
-
-        return $showtimes;
     }
 }

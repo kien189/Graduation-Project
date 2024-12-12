@@ -33,28 +33,43 @@ class RoleController extends Controller
     }
     public function syncRoles(Request $request, User $user)
     {
+        // Lấy thông tin người dùng hiện tại
+        $currentUser = auth()->user();
+
+        // Kiểm tra quyền của người dùng hiện tại
+        if ($currentUser->hasRole('manager')) {
+            // Người dùng Manager chỉ được gắn vai trò Staff
+            if (!empty(array_diff($request->roles, ['staff']))) {
+                return response()->json([
+                    'message' => 'Bạn chỉ được phép gán vai trò "nhân viên".'
+                ], 403);
+            }
+        }
+
+        // Validate dữ liệu
         $validated = $request->validate([
             'roles' => 'array|required',
             'cinema_id' => 'required_if:roles,manager|exists:cinema,id',
         ]);
 
-        // Gán roles
+        // Gán roles cho user
         $user->syncRoles($request->roles);
 
-        // Nếu user là manager, gán cinema_id
+        // Nếu user được gán vai trò Manager, gán cinema_id
         if (in_array('manager', $request->roles)) {
             $user->cinema_id = $request->cinema_id;
             $user->save();
         } else {
-            // Loại bỏ cinema_id nếu không còn là manager
+            // Xóa cinema_id nếu vai trò không còn là Manager
             $user->cinema_id = null;
             $user->save();
         }
 
         return response()->json([
-            'message' => 'Roles and cinema assigned successfully.',
-        ]);
+            'message' => 'Vai trò và điện ảnh được giao thành công.'
+        ], 200);
     }
+
 
 
 
@@ -63,7 +78,7 @@ class RoleController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'cinema_id' => 'nullable|integer|exists:cinemas,id', // Thêm ràng buộc cinema_id
+            'cinema_id' => 'nullable|integer|exists:cinema,id', // Thêm ràng buộc cinema_id
         ]);
 
         $role = Role::create(['name' => $request->name]);
@@ -99,5 +114,13 @@ class RoleController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
         return $this->success([], 'delete succuess', 200);
+    }
+
+    public function status(int $id)
+    {
+        $movie = User::findOrFail($id);
+        $movie->status = $movie->status == 1 ? 0 : 1;
+        $movie->save();
+        return $this->success('', 'Cập nhật trạng thái thành công.', 200);
     }
 }

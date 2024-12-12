@@ -17,8 +17,11 @@ return new class extends Migration {
             $table->string('seat_name');
             $table->string('seat_column');
             $table->string('seat_row');
+            $table->string('barcode')->nullable();
+            $table->string('code')->nullable();
             $table->enum('seat_type', ['Standard', 'Couple', 'VIP'])->default('Standard');
             $table->enum('status', ['Reserved Until', 'Booked'])->default('Reserved Until');
+            $table->boolean('is_checked_in')->default(false);
             $table->timestamp('reserved_until')->nullable();
             $table->timestamps();
             $table->foreign('showtime_id')->references('id')->on('showtimes')->onDelete('cascade');

@@ -25,16 +25,20 @@ class CinemaService
         if (!$user) {
             // Người chưa đăng nhập: chỉ lấy rạp có status = 1
             $query->where('status', 1);
-        } elseif ($user->hasRole('manager')) {
-            // Manager: chỉ lấy rạp theo cinema_id của họ
+        } elseif ($user->hasRole('admin')) {
+            // Admin: không lọc gì thêm, lấy tất cả rạp
+            return $query;
+        } elseif ($user->hasRole('manager|staff')) {
+            // Manager hoặc Staff: chỉ lấy rạp theo cinema_id của họ
             $query->where('id', $user->cinema_id);
-        } elseif (!$user->hasRole('admin')) {
-            // Người dùng không phải admin: chỉ lấy rạp có status = 1
+        } else {
+            // Các vai trò khác (không phải admin/manager/staff): chỉ lấy rạp có status = 1
             $query->where('status', 1);
         }
 
         return $query;
     }
+
 
     public function index()
     {

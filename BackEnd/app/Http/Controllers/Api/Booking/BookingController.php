@@ -81,21 +81,21 @@ class BookingController extends Controller
             $booking->status = 'Thanh toán thành công';
 
             // Tạo mã vạch dưới dạng PNG
-            $generator = new BarcodeGeneratorPNG();
-            $barcode = $generator->getBarcode($booking->id, BarcodeGenerator::TYPE_CODE_128);
+            // $generator = new BarcodeGeneratorPNG();
+            // $barcode = $generator->getBarcode($booking->id, BarcodeGenerator::TYPE_CODE_128);
 
-            // Tạo tên file duy nhất cho mã vạch (dựa vào booking ID)
-            $fileName = 'barcode_' . $booking->id . '.png';
+            // // Tạo tên file duy nhất cho mã vạch (dựa vào booking ID)
+            // $fileName = 'barcode_' . $booking->id . '.png';
 
-            // Lưu mã vạch vào thư mục 'public/barcodes'
-            Storage::put('public/barcodes/' . $fileName, $barcode);
+            // // Lưu mã vạch vào thư mục 'public/barcodes'
+            // Storage::put('public/barcodes/' . $fileName, $barcode);
 
-            // Đưa đường dẫn đến mã vạch vào phương thức uploadImage
-            $filePath = storage_path('app/public/barcodes/' . $fileName);
-            $imageUrl = $this->uploadImage($filePath); // Gửi ảnh lên ImgBB
+            // // Đưa đường dẫn đến mã vạch vào phương thức uploadImage
+            // $filePath = storage_path('app/public/barcodes/' . $fileName);
+            // $imageUrl = $this->uploadImage($filePath); // Gửi ảnh lên ImgBB
 
-            // Lưu đường dẫn của ảnh mã vạch vào cơ sở dữ liệu (URL từ ImgBB)
-            $booking->barcode = $imageUrl;
+            // // Lưu đường dẫn của ảnh mã vạch vào cơ sở dữ liệu (URL từ ImgBB)
+            // $booking->barcode = $imageUrl;
             $booking->save();
 
             $this->rankService->points($booking);
@@ -226,6 +226,25 @@ class BookingController extends Controller
                         // Tạo ghế mới
                         $seatCreate = Seats::create($seatData);
                         if ($seatCreate) {
+                            $generator = new BarcodeGeneratorPNG();
+                            $barcode = $generator->getBarcode($seatCreate->id.now()->format('Ymd'), BarcodeGenerator::TYPE_CODE_128);
+
+                            // Tạo tên file duy nhất cho mã vạch (dựa vào ID của ghế)
+                            $fileName = 'barcode_' . $seatCreate->id.now()->format('Ymd') . '.png';
+
+                            // Lưu mã vạch vào thư mục 'public/barcodes'
+                            Storage::put('public/barcodes/' . $fileName, $barcode);
+
+                            // Đường dẫn đến file mã vạch
+                            $filePath = storage_path('app/public/barcodes/' . $fileName);
+
+                            // Gửi ảnh mã vạch lên ImgBB và nhận URL
+                            $imageUrl = $this->uploadImage($filePath);
+                            $code = $seatCreate->id.now()->format('Ymd');
+                            // Cập nhật đường dẫn mã vạch vào cơ sở dữ liệu
+                            $seatCreate->barcode = $imageUrl;
+                            $seatCreate->code= $code;
+                            $seatCreate->save();
                             $seatDataList[] = $seatCreate;
                             $seatCreate->reserveForUser();
                         } else {

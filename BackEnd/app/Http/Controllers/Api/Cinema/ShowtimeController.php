@@ -10,6 +10,7 @@ use App\Models\Movie;
 use App\Models\Room;
 use App\Models\Showtime;
 use App\Services\Cinema\ShowtimeService;
+use Carbon\Carbon;
 // use Dotenv\Validator;
 use Illuminate\Http\Request;
 use Exception;
@@ -146,22 +147,43 @@ class ShowtimeController extends Controller
         try {
             $data = $validator->validated();
 
-            // Fetch the duration from the movie_id
+            // Fetch the movie to get the duration
             $movie = Movie::find($data['movie_id']);
             if (!$movie) {
                 return $this->error('The movie associated with the provided movie_id does not exist.');
             }
-
-            // Use the movie duration in the data
             $data['duration'] = $movie->duration;
+
+            // Check for conflicting showtimes
+            $existingShowtimes = Showtime::where('room_id', $data['room_id'])
+                ->where('showtime_date', $data['date'])
+                ->where(function ($query) use ($data) {
+                    $query->whereBetween('showtime_start', [
+                        $data['opening_time'],
+                        Carbon::parse($data['closing_time'])->format('H:i:s')
+                    ])
+                        ->orWhereBetween('showtime_end', [
+                            Carbon::parse($data['opening_time'])->format('H:i:s'),
+                            Carbon::parse($data['closing_time'])->format('H:i:s')
+                        ]);
+                })
+                ->get();
+
+            if ($existingShowtimes->isNotEmpty()) {
+                return $this->error('The selected time range overlaps with existing showtimes for this room.', [
+                    'existing_showtimes' => $existingShowtimes,
+                ]);
+            }
 
             // Generate showtimes using the service
             $createdShowtimes = $this->showtimeService->generateShowtimes($data);
+
             return $this->success($createdShowtimes, 'Showtimes created successfully.');
         } catch (Exception $e) {
             return $this->error($e->getMessage());
         }
     }
+
     public function status(int $id)
     {
         $movie = Showtime::findOrFail($id);
@@ -169,5 +191,4 @@ class ShowtimeController extends Controller
         $movie->save();
         return $this->success('', 'Cập nhật trạng thái thành công.', 200);
     }
-
 }

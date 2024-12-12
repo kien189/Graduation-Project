@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\PayMethod\PayMethodController;
 use App\Http\Controllers\Api\Auth\AccountVerificationController;
 use App\Http\Controllers\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Api\Booking\BookingStaffController;
+use App\Http\Controllers\Api\Booking\CheckInTicketController;
 use App\Http\Controllers\Api\Filter\DashBoard\FilterOfDashBoarchController;
 use App\Http\Controllers\Api\Filter\FilterMovieByNewController;
 use App\Http\Controllers\Api\Google\GoogleController;
@@ -106,9 +107,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
     // Role Management
     Route::apiResource('roles', RoleController::class);
-    Route::post('/roles/{role}/permissions', [RoleController::class, 'syncPermissions'])->name('roles.permissions.sync'); // Assign permissions to role
-    Route::post('/roles/{user}/users', [RoleController::class, 'syncRoles'])->name('users.roles.sync'); // Assign roles to user
-    Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy'); // Delete role
+    Route::post('/roles/{role}/permissions', [RoleController::class, 'syncPermissions'])->name('roles.permissions.sync'); // Gán quyền cho vai trò
+    Route::post('/roles/{user}/users', [RoleController::class, 'syncRoles'])->name('users.roles.sync'); // gán vai trò cho người dùng
+    Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy'); // Xóa vai trò
 
     // Revenue Statistics
     Route::get('all-revenue-cinema', [RevenueController::class, 'allRevenueCinema']); // All cinema revenue
@@ -125,6 +126,13 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::post('/website-settings', [WebsiteSettingController::class, 'index']); // List Website Settings
     Route::post('/website-settings/update/{id}', [WebsiteSettingController::class, 'update']); // Update Website Settings
     Route::post('/website-settings/reset', [WebsiteSettingController::class, 'reset']); // Reset Website Settings
+
+    //status
+    Route::post('movieStatus/{id}', [MovieController::class, 'status']);
+    Route::post('showtimeStatus/{id}', [ShowtimeController::class, 'status']);
+    Route::post('newStatus/{id}', [NewCategoryController::class, 'status']);
+    Route::post('comboStatus/{id}', [ComboController::class, 'status']);
+    Route::post('userStatus/{id}', [RoleController::class, 'status']);
 });
 
 // Manager: Limited access to their assigned cinemas and related data
@@ -154,17 +162,38 @@ Route::middleware(['auth:sanctum', 'role:manager'])->prefix('manager')->group(fu
     Route::apiResource('news_category', NewCategoryController::class);
     Route::apiResource('news', NewController::class);
 
-    // Ticket Printing
-    Route::post('printTicket', [OrderController::class, 'printTicket']); // Print ticket and change status
+    //Phân quyền
+    Route::apiResource('roles', RoleController::class);
+    Route::post('/roles/{role}/permissions', [RoleController::class, 'syncPermissions'])->name('roles.permissions.sync'); // Gán quyền cho vai trò
+    Route::post('/roles/{user}/users', [RoleController::class, 'syncRoles'])->name('users.roles.sync'); // gán vai trò cho người dùng
+    Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy'); // Xóa vai trò
+
 
     // Dashboard and Filters
     Route::get('filter-dashboard', [FilterOfDashBoarchController::class, 'filterOfDashBoarch']); // Filter dashboard data
     Route::get('/dashboard', [DashboardAdminController::class, 'dashboardAdmin']); // Dashboard page
+
+    // status
+    Route::post('movieStatus/{id}', [MovieController::class, 'status']);
+    Route::post('showtimeStatus/{id}', [ShowtimeController::class, 'status']);
+    Route::post('newStatus/{id}', [NewCategoryController::class, 'status']);
+    Route::post('comboStatus/{id}', [ComboController::class, 'status']);
+    Route::post('userStatus/{id}', [RoleController::class, 'status']);
+
+    // Ticket Printing
+    Route::post('printTicket', [OrderController::class, 'printTicket']); // Print ticket and change status
+
+    //checkin ghế barcode
+    Route::post('checkInSeat/{code}', [CheckInTicketController::class, 'checkInSeat']);
+    Route::post('checkInBooking/{code}', [CheckInTicketController::class, 'checkInBooking']);
 });
 
 Route::middleware(['auth:sanctum', 'role:staff'])->prefix('staff')->group(function () {
     // Ticket Printing
-    Route::post('printTicket', [OrderController::class, 'printTicket']); // Print ticket and change status
+    Route::post('printTicket', [OrderController::class, 'printTicket']); // in vé và thay đổi trạng thái
+    //checkin ghế barcode
+    Route::post('checkInSeat/{code}', [CheckInTicketController::class, 'checkInSeat']);
+    Route::post('checkInBooking/{code}', [CheckInTicketController::class, 'checkInBooking']);
 });
 
 
