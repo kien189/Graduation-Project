@@ -29,7 +29,11 @@ class OrderService
             });
         } else {
             // Các vai trò khác (không phải admin/manager/staff): chỉ lấy rạp có status = 1
-            $query->where('user_id', Auth::user()->id)->where('status','Thanh toán thành công');
+            $query->where('user_id', Auth::user()->id)
+                ->where(function ($q) {
+                    $q->where('status', 'Thanh toán thành công')
+                        ->orWhere('status', 'Đã in vé');
+                });
         }
 
         return $query;

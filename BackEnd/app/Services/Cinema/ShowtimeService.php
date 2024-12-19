@@ -66,7 +66,7 @@ class ShowtimeService
 
             $openingTime->addMinutes(15);
         }
-
+        // $openingTime->addMinutes(20);
         return $showtimes;
     }
 

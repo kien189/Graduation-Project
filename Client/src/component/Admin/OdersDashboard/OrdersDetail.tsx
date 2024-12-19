@@ -369,7 +369,7 @@ const OrderDetail = () => {
               </tr>
             </tbody>
           </table>
-          {/* <div className='barcode-seat'>
+          <div className='barcode-seat' style={{display:"none"}}>
   {orderDetails.seats.length > 0 ? (
     orderDetails.seats.map((seats, index) => (
       <div key={index} className="seat-barcode-container">
@@ -380,7 +380,7 @@ const OrderDetail = () => {
   ) : (
     <p>Không có ghế nào</p>
   )}
-</div> */}
+</div>
 
 <div className="tongtien">
   <p><strong>Tiền Vé:</strong> {formatCurrency(orderDetails.showtime.price * orderDetails.seats.length)} VNĐ</p><br />

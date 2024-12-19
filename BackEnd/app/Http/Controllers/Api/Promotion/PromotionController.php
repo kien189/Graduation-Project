@@ -111,7 +111,7 @@ class PromotionController extends Controller
 
         $usageCount = $userPromotion ? $userPromotion->usage_count : 0;
 
-        if ($usageCount >= 2) { // Giới hạn 2 lần
+        if ($usageCount >= 20) { // Giới hạn 2 lần
             return response()->json(['message' => 'Bạn đã sử dụng hết lượt cho mã khuyến mãi này.'], 400);
         }
 
@@ -168,7 +168,7 @@ class PromotionController extends Controller
 
                 $usageCount = $userPromotion ? $userPromotion->usage_count : 0;
 
-                return $usageCount < 2; // Chỉ hiển thị nếu user chưa dùng hết lượt
+                return $usageCount < 10; // Chỉ hiển thị nếu user chưa dùng hết lượt
             });
 
         return response()->json([

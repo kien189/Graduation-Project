@@ -15,7 +15,7 @@ import {
 } from "chart.js";
 import "@fortawesome/fontawesome-free/css/all.min.css"; // Import FontAwesome
 import instance from "../../../server";
-import { Button, DatePicker, Form, Pagination, Select, Space } from "antd";
+import { Button, DatePicker, Form, notification, Pagination, Select, Space } from "antd";
 
 import dayjs, { Dayjs } from "dayjs"; // Import dayjs for date handling
 import { Cinema } from "../../../interface/Cinema";
@@ -79,7 +79,7 @@ const [userRole, setUserRole] = useState<string>("");
     
     if (roles.length > 0) {
       setUserRole(roles[0].name);
-    } else {
+} else {
       setUserRole("unknown"); // Gán giá trị mặc định khi không có vai trò
     }
   }, []);
@@ -157,8 +157,7 @@ useEffect(() => {
       //     year: formattedYear
       //   }
       // });
-
-      // console.log("API response:", dashboardResponse.data);
+// console.log("API response:", dashboardResponse.data);
       
 
 
@@ -166,6 +165,7 @@ useEffect(() => {
       setMovieRevenue(dashboardResponse.data.movie_revenue);
       setSeatChartData(dashboardResponse.data.chart_seats || {});
       setDailyData(dashboardResponse.data.daily_revenue_chart);
+      console.log("data:",dashboardResponse.data.daily_revenue_chart)
       setMonthlyData(dashboardResponse.data.monthly_revenue_chart);
       setDayRevenue(dashboardResponse.data.day_revenue);
       setMonthRevenue(dashboardResponse.data.month_revenue);
@@ -255,7 +255,7 @@ useEffect(() => {
     ],
   };
   const monthlyChartData = {
-    labels: monthlyLabels,
+labels: monthlyLabels,
     datasets: [
       {
         label: "Doanh thu theo tháng",
@@ -300,7 +300,22 @@ useEffect(() => {
   const selectedCinemaName = selectedCinema
   ? cinemas.find((cinema) => cinema.id === selectedCinema)?.cinema_name || "Rạp không xác định"
   : "Tất cả các rạp";
-
+  const handleDateChange = (dates:any) => {
+    if (dates && dates.length === 2) {
+      const [startDate, endDate] = dates;
+      const diffInDays = (endDate - startDate) / (1000 * 3600 * 24); // Tính khoảng cách ngày
+  
+      if (diffInDays > 15) {
+        // Hiển thị thông báo lỗi
+        notification.warning({
+          message: 'Lỗi',
+          description: 'Khoảng cách giữa ngày bắt đầu và ngày kết thúc không được vượt quá 15 ngày.',
+        });
+        return; // Dừng lại nếu khoảng cách quá 15 ngày
+      }
+    }
+    setSelectedDateRange(dates); // Cập nhật giá trị ngày đã chọn nếu không có lỗi
+  };
   return (
     <div className="dashboard">
       <h1 className="dashboard-subtitle">{selectedCinemaName}</h1>
@@ -347,7 +362,7 @@ useEffect(() => {
       <div className="summary-filter">
       <Form.Item label="">
               <DatePicker
-                placeholder="Chọn ngày"
+placeholder="Chọn ngày"
                 format="YYYY-MM-DD"
                 value={selectedDate}
                 onChange={(date) => setSelectedDate(date)}
@@ -389,17 +404,17 @@ useEffect(() => {
       {monthRevenue ? `${monthRevenue.current_revenue.toLocaleString()}₫ ` : ''}
     </div>
     <div className="previous_revenue">
-    <p>{dayRevenue ? `${dayRevenue.previous_revenue.toLocaleString()}₫` : ''}</p>
+    <p>{monthRevenue ? `${monthRevenue.previous_revenue.toLocaleString()}₫` : ''}</p>
     </div>
     <div className="summary-change ${monthRevenue?.percentage_change > 0 ? 'increase' : 'decrease'}">
-    {dayRevenue ? (
+    {monthRevenue ? (
       <>
-        {dayRevenue.percentage_change > 0 ? (
+        {monthRevenue.percentage_change > 0 ? (
           <i className="fa fa-arrow-up" style={{ color: 'green' }}></i>
         ) : (
           <i className="fa fa-arrow-down" style={{ color: 'red' }}></i>
         )}
-        {`${dayRevenue.percentage_change}%`}
+        {`${monthRevenue.percentage_change}%`}
       </>
     ) : '0%'}
     </div>
@@ -416,17 +431,17 @@ useEffect(() => {
     <div className="summary-number">
       {yearRevenue ? `${yearRevenue.current_revenue.toLocaleString()}₫ ` : ''}
     </div>
-    <div className="previous_revenue"><p>{dayRevenue ? `${dayRevenue.previous_revenue.toLocaleString()}₫` : ''}</p></div>   
+    <div className="previous_revenue"><p>{yearRevenue ? `${yearRevenue.previous_revenue.toLocaleString()}₫` : ''}</p></div>   
    
     <div className="summary-change ${yearRevenue?.percentage_change > 0 ? 'increase' : 'decrease'}">
-    {dayRevenue ? (
+    {yearRevenue ? (
       <>
-        {dayRevenue.percentage_change > 0 ? (
+        {yearRevenue.percentage_change > 0 ? (
           <i className="fa fa-arrow-up" style={{ color: 'green' }}></i>
         ) : (
           <i className="fa fa-arrow-down" style={{ color: 'red' }}></i>
         )}
-        {`${dayRevenue.percentage_change}%`}
+        {`${yearRevenue.percentage_change}%`}
       </>
     ) : '0%'}
    
@@ -448,7 +463,7 @@ useEffect(() => {
               <RangePicker
                 format="YYYY-MM-DD"
                 value={selectedDateRange}
-                onChange={(dates) => setSelectedDateRange(dates)}
+                onChange={handleDateChange}
                 style={{ width: 240 }}
               />
             </Form.Item>
@@ -509,7 +524,7 @@ useEffect(() => {
                                     position: 'top',
                                 },
                                 tooltip: {
-                                    callbacks: {
+callbacks: {
                                       label: (context) => {
                                         const value = Number(context.raw); // Ép kiểu thành số
                                         return value ? `${value.toLocaleString()}₫` : ''; // Hiển thị VNĐ

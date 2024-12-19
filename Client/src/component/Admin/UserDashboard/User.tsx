@@ -65,7 +65,13 @@ const UserDashboard: React.FC = () => {
     // Handle status change
     const handleStatusChange = async (id: number, status: boolean) => {
         try {
-            await instance.post(`/manager/userStatus/${id}`, { status: !status });
+            if (userRole === "admin") {
+                await instance.post(`/admin/userStatus/${id}`, { status: !status });
+            } else if (userRole === "manager") {
+                await instance.post(`/manager/userStatus/${id}`, { status: !status });
+            } else {
+                await instance.post(`/userStatus/${id}`, { status: !status });
+            }
             const updatedUsers = users.map(user =>
                 user.id === id ? { ...user, status: !status } : user
             );

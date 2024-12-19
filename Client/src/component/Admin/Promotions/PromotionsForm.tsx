@@ -14,7 +14,7 @@ const promotionSchema = z.object({
     .number({ invalid_type_error: "Vui lòng nhập % giảm giá" })
     .min(0, "Giảm giá phải lớn hơn hoặc bằng 0")
     .max(50, "Giảm giá không thể vượt quá 50%"),
-  max_discount: z.number({ invalid_type_error: "Vui lòng nhập giảm giá tối đa" }).min(1, "Giảm giá tối đa phải lớn hơn 0").max(200,"giảm giá tối đa 200.000VNĐ"),
+  max_discount: z.number({ invalid_type_error: "Vui lòng nhập giảm giá tối đa" }).min(1, "Giảm giá tối đa phải lớn hơn 0").max(200000,"giảm giá tối đa 200.000VNĐ"),
   min_purchase: z.number({ invalid_type_error: "Vui lòng nhập giá trị tối thiểu" }).min(1, "Giá trị mua tối thiểu phải lớn hơn 0"),
   valid_from: z
     .string()

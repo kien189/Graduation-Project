@@ -121,7 +121,6 @@ const OrderCheckout = () => {
             console.error("Error applying voucher:", error);
         }
     };
-    
     const handleUsePoints = async () => {
         const points = Number(pointsToUse);
     
@@ -404,11 +403,7 @@ const OrderCheckout = () => {
                 <button className="apply-voucher-btn" onClick={handleApplyVoucher}>
                     Áp dụng
                 </button>
-                {voucherApplied && (
-                    <button className="apply-voucher-btn-1" onClick={handleRemoveVoucher}>
-                        Xóa voucher
-                    </button>
-                )}
+                
             </>
         )}
     </div>

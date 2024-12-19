@@ -193,7 +193,7 @@ const OrderHistoryApp: React.FC = () => {
                           ) : (
                             <>
                               <CalendarOutlined style={{ marginRight: "8px", color: "#faad14" }} />
-                              <b>Thời gian:</b> {order.showtime.showtime_date} {order.showtime.showtime_start}
+                              <b>Thời gian:</b> {order.showtime.showtime_date} - {order.showtime.showtime_start.slice(0,5)}
                             </>
                           )}
                         </Text>
@@ -207,7 +207,12 @@ const OrderHistoryApp: React.FC = () => {
                             </>
                           )}
                         </Text>
-                        <Text style={{ fontWeight: 600 }}>
+                     
+                        <Text style={{ fontSize: "16px" }}>
+                              <FieldTimeOutlined style={{ marginRight: "10px", color: "#fa541c" }} />
+                              <b>Trạng thái:</b> {order.status}
+                            </Text>
+                            <Text style={{ fontWeight: 600 }}>
                           <b>Tổng:</b> {formatCurrency(order.amount)}
                         </Text>
                       </Space>
@@ -273,7 +278,7 @@ const OrderHistoryApp: React.FC = () => {
                             </Text>
                             <Text style={{ fontSize: "16px" }}>
                               <CalendarOutlined style={{ marginRight: "10px", color: "#faad14" }} />
-                              <b>Thời gian:</b> {selectedOrder.showtime.showtime_date} {selectedOrder.showtime.showtime_start}
+                              <b>Thời gian:</b>{selectedOrder.showtime.showtime_start.slice(0,5) } - {selectedOrder.showtime.showtime_date} 
                             </Text>
                             <Text style={{ fontSize: "16px" }}>
                               <TeamOutlined style={{ marginRight: "10px", color: "#52c41a" }} />

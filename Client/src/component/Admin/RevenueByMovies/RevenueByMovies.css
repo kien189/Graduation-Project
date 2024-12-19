@@ -1,30 +1,38 @@
 /* General page styling */
+
 .revenue-by-movie {
     padding: 30px;
-    background: rgb(229, 240, 242); /* Nền xanh nhạt giống DashboardAdmin */
+    background: rgb(229, 240, 242);
+    /* Nền xanh nhạt giống DashboardAdmin */
     min-height: 190vh;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
+
 /* Title styling */
+
 .revenue-by-movie h2 {
     font-size: 3rem;
     margin-bottom: 40px;
-    color: #006064; /* Xanh đậm giống DashboardAdmin */
+    color: #006064;
+    /* Xanh đậm giống DashboardAdmin */
     text-align: center;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 1.5px;
 }
 
+
 /* Summary card styling */
+
 .summary-card {
-    background-color: #ffffff; /* Nền trắng */
+    background-color: #ffffff;
+    /* Nền trắng */
     border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); /* Giống DashboardAdmin */
-    padding: 30px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    /* Giống DashboardAdmin */
     margin-bottom: 30px;
     text-align: center;
     width: 100%;
@@ -33,18 +41,22 @@
 
 .summary-card h3 {
     font-size: 1.8rem;
-    color: #006064; /* Xanh đậm */
+    color: #006064;
+    /* Xanh đậm */
     margin-bottom: 20px;
     font-weight: 600;
 }
 
 .total-revenue1 {
     font-size: 2.5rem;
-    color: #f56565; /* Màu đỏ giống trong biểu đồ */
+    color: #f56565;
+    /* Màu đỏ giống trong biểu đồ */
     font-weight: bold;
 }
 
+
 /* Chart container styling */
+
 .chart-container {
     display: flex;
     justify-content: space-between;
@@ -54,25 +66,35 @@
     gap: 20px;
 }
 
+
 /* Chart section styling */
+
 .chart-section {
     flex: 1;
-    background-color: #ffffff; /* Nền trắng */
+    background-color: #ffffff;
+    /* Nền trắng */
     border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); /* Giống DashboardAdmin */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    /* Giống DashboardAdmin */
     padding: 30px;
 }
 
+
 /* Chart wrapper to ensure proper size */
+
 .chart-wrapper {
     width: 100%;
-    height: 300px; /* Adjust height as needed */
+    height: 300px;
+    /* Adjust height as needed */
 }
 
+
 /* Button styles */
+
 .export-btn {
     padding: 12px 24px;
-    background-color: #0097a7; /* Màu xanh biển nhạt */
+    background-color: #0097a7;
+    /* Màu xanh biển nhạt */
     color: white;
     border: none;
     border-radius: 5px;
@@ -83,21 +105,22 @@
 }
 
 .export-btn:hover {
-    background-color: #00796b; /* Xanh đậm cho hover */
+    background-color: #00796b;
+    /* Xanh đậm cho hover */
     transform: scale(1.05);
 }
 
+
 /* Responsive design */
+
 @media (max-width: 768px) {
     .chart-container {
         flex-direction: column;
         gap: 20px;
     }
-
     .chart-section {
         width: 100%;
     }
-
     .export-btn {
         width: 100%;
         font-size: 0.875rem;

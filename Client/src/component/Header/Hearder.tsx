@@ -13,7 +13,7 @@ const Header = () => {
   const [isHeaderLeftVisible, setHeaderLeftVisible] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [vouchers, setVouchers] = useState<Voucher[]>([]);
+  const [vouchers, setVouchers] = useState<Voucher>();
   const [isProfileMenuVisible, setProfileMenuVisibles] = useState(false);
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
   const [cinemas, setCinemas] = useState<Cinema[]>([]);
@@ -82,10 +82,11 @@ const Header = () => {
  
   
       // Check if points are greater than 1000 to trigger the voucher fetch
-      if (points > 999999 && user_id) {
+      if ( user_id) {
         instance.get('/vouchers')
           .then(response => {
             setVouchers(response.data.vouchers);
+            console.log('data voucher:',response.data.vouchers)
           })
           .catch(error => {
             console.log("Error fetching vouchers:", error.response?.data || error.message);
@@ -417,20 +418,20 @@ const Header = () => {
   &#128276; {/* Biểu tượng thông báo */}
   {isNotificationVisible && (
     <div className="notification-dropdown">
-      {vouchers && vouchers.length > 0 ? (
-        vouchers.map((voucher, index) => (
-          <p key={index}>
-            {/* Thêm icon voucher từ FontAwesome */}
-            <span className="voucher-icon">
-              <i className="fas fa-ticket-alt"></i> {/* Icon vé voucher */}
-            </span>
-            {voucher.code}
-          </p>
-        ))
-      ) : (
-        <p>Không có thông báo mới</p>
-      )}
-    </div>
+    {vouchers && Object.keys(vouchers).length > 0 ? (
+      Object.values(vouchers).map((voucher, index) => (
+        <p key={voucher.id}>
+          <span className="voucher-icon">
+            <i className="fas fa-ticket-alt"></i>
+          </span>
+          Code: {voucher.code}
+        </p>
+      ))
+    ) : (
+      <p>Không có thông báo mới</p>
+    )}
+  </div>
+ 
   )}
 </span>
 
