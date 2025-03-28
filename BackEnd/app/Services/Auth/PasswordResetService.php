@@ -23,6 +23,7 @@ class PasswordResetService
         }
 
         $user->password = $data['new_password'];
+        /** @var \Illuminate\Database\Eloquent\Model $user */
         $user->save();
 
         return $user;

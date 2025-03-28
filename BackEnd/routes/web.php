@@ -20,7 +20,7 @@ use App\Http\Controllers\RoleController;
 */
 
  Route::get('/', function () {
-     return view('welcome');
+     return phpinfo();
  });
 
 
